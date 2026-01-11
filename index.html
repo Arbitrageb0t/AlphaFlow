@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AlphaFlow • Track & Copy Top Solana Traders</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg: #0f0f1a;
+      --surface: #111827;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --primary: #00f0ff;
+      --accent: #a855f7;
+      --profit: #22c55e;
+      --loss: #ef4444;
+      --border: rgba(255,255,255,0.08);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      background: linear-gradient(to bottom, var(--bg), #0a0a12);
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 100;
+      background: rgba(15,15,26,0.7);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    nav {
+      height: 4.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-family: 'Manrope', sans-serif;
+      font-size: 1.75rem;
+      font-weight: 800;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .wallet-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1.5rem;
+      background: linear-gradient(90deg, #00d4ff, #a855f7);
+      color: white;
+      font-weight: 600;
+      border-radius: 9999px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 20px rgba(168,85,247,0.25);
+    }
+
+    .wallet-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(168,85,247,0.4);
+    }
+
+    .hero {
+      padding-top: 14rem;
+      padding-bottom: 8rem;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-family: 'Manrope', sans-serif;
+      font-size: clamp(2.8rem, 8vw, 5.5rem);
+      font-weight: 800;
+      line-height: 1.05;
+      margin-bottom: 1.5rem;
+      background: linear-gradient(90deg, var(--primary), var(--accent), var(--primary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      background-size: 200% auto;
+      animation: gradient 8s ease infinite;
+    }
+
+    @keyframes gradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .hero p {
+      font-size: 1.3rem;
+      color: var(--text-muted);
+      max-width: 600px;
+      margin: 0 auto 2.5rem;
+    }
+
+    .big-cta {
+      padding: 1.2rem 2.8rem;
+      font-size: 1.4rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, #00d4ff, #a855f7, #00d4ff);
+      background-size: 200% auto;
+      color: white;
+      border: none;
+      border-radius: 9999px;
+      cursor: pointer;
+      box-shadow: 0 10px 40px rgba(168,85,247,0.3);
+      transition: all 0.4s ease;
+      animation: gradient 6s ease infinite;
+    }
+
+    .big-cta:hover {
+      transform: scale(1.05);
+      box-shadow: 0 15px 50px rgba(168,85,247,0.45);
+    }
+
+    .dashboard-preview {
+      padding: 4rem 0;
+      display: grid;
+      gap: 2rem;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    }
+
+    .card {
+      background: rgba(17,24,39,0.6);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: 1.25rem;
+      padding: 1.75rem;
+      transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-8px);
+    }
+
+    .card h3 {
+      color: var(--primary);
+      margin-bottom: 1.25rem;
+      font-size: 1.4rem;
+    }
+
+    .stat {
+      margin: 0.75rem 0;
+      font-size: 1.1rem;
+    }
+
+    .profit { color: var(--profit); font-weight: 600; }
+    .muted { color: var(--text-muted); }
+
+    footer {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 768px) {
+      .hero { padding-top: 10rem; }
+      .big-cta { font-size: 1.2rem; padding: 1rem 2.2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="container">
+      <nav>
+        <div class="logo">AlphaFlow</div>
+        <button class="wallet-btn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12V7H5a2 2 0 0 1-2-2m18 12v-5H5a2 2 0 0 0-2 2m0 0v5a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5m-10 0h6"/>
+          </svg>
+          Import Wallet
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <h1>Track & Auto-Copy<br/>Winning Solana Traders</h1>
+      <p>Follow top performers in real-time and copy their trades automatically with safety controls</p>
+      
+      <button class="big-cta">
+        Import Wallet & Start Copying
+      </button>
+    </section>
+
+    <section class="dashboard-preview">
+      <div class="card">
+        <h3>Wallet Overview</h3>
+        <div class="stat">30d PnL: <span class="profit">+187.4%</span></div>
+        <div class="stat">Win Rate: <span class="profit">81%</span></div>
+        <div class="stat muted">Total Trades: 142</div>
+        <div class="stat muted">Current Balance: 48.7 SOL</div>
+      </div>
+
+      <div class="card">
+        <h3>Auto-Copy Settings</h3>
+        <div class="stat">Copy Size: 8% of balance</div>
+        <div class="stat">Max Slippage: 0.8%</div>
+        <div class="stat">Auto-sell at +40% / -15%</div>
+        <div style="margin-top:1.5rem;">
+          <button style="width:100%; padding:0.9rem; background:var(--profit); color:white; border:none; border-radius:12px; font-weight:600; cursor:pointer;">
+            Enable Auto-Copy
+          </button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Recent Copied Trades</h3>
+        <div class="stat">Buy $BONK +3.2 SOL <span class="profit">+24%</span></div>
+        <div class="stat">Sell $WIF -1.1 SOL <span style="color:var(--loss)">-7%</span></div>
+        <div class="stat">Buy $POPCAT +5.8 SOL <span class="profit">+41%</span></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    © 2026 AlphaFlow • Copy trading carries high risk • Not financial advice
+  </footer>
+
+</body>
+</html>
