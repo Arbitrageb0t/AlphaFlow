@@ -141,40 +141,6 @@
       box-shadow: 0 15px 50px rgba(168,85,247,0.45);
     }
 
-    .dashboard-preview {
-      padding: 4rem 0;
-      display: grid;
-      gap: 2rem;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    }
-
-    .card {
-      background: rgba(17,24,39,0.6);
-      backdrop-filter: blur(12px);
-      border: 1px solid var(--border);
-      border-radius: 1.25rem;
-      padding: 1.75rem;
-      transition: transform 0.3s ease;
-    }
-
-    .card:hover {
-      transform: translateY(-8px);
-    }
-
-    .card h3 {
-      color: var(--primary);
-      margin-bottom: 1.25rem;
-      font-size: 1.4rem;
-    }
-
-    .stat {
-      margin: 0.75rem 0;
-      font-size: 1.1rem;
-    }
-
-    .profit { color: var(--profit); font-weight: 600; }
-    .muted { color: var(--text-muted); }
-
     footer {
       text-align: center;
       padding: 3rem 1rem;
@@ -213,28 +179,6 @@
       <button class="big-cta">
         Import Wallet & Start Copying
       </button>
-    </section>
-
-    <section class="dashboard-preview">
-      <div class="card">
-        <h3>Wallet Overview</h3>
-        <div class="stat">30d PnL: <span class="profit">+187.4%</span></div>
-        <div class="stat">Win Rate: <span class="profit">81%</span></div>
-        <div class="stat muted">Total Trades: 142</div>
-        <div class="stat muted">Current Balance: 48.7 SOL</div>
-      </div>
-
-      <div class="card">
-        <h3>Auto-Copy Settings</h3>
-        <div class="stat">Copy Size: 8% of balance</div>
-        <div class="stat">Max Slippage: 0.8%</div>
-        <div class="stat">Auto-sell at +40% / -15%</div>
-        <div style="margin-top:1.5rem;">
-          <button style="width:100%; padding:0.9rem; background:var(--profit); color:white; border:none; border-radius:12px; font-weight:600; cursor:pointer;">
-            Enable Auto-Copy
-          </button>
-        </div>
-      </div>
     </section>
   </main>
 
